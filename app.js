@@ -20,7 +20,9 @@ async function fetchItems() {
 fetchItems();
 
 // Start the shopping process
-function startShopping() {
+async function startShopping() {
+    await fetchItems(); // Force fetch items before checking
+
     const customerName = document.getElementById("customerName").value;
     const gender = document.getElementById("gender").value;
 
@@ -37,6 +39,7 @@ function startShopping() {
     let purchases = [];
     addItem(purchases, customerName, gender);
 }
+
 
 // Function to add an item to the bill
 function addItem(purchases, customerName, gender) {
