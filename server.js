@@ -88,12 +88,11 @@ app.post("/customers", async (req, res) => {
 app.get("/customers", async (req, res) => {
     try {
         const customers = await Customer.find();
+        console.log("Fetched Customers from MongoDB:", customers); 
         res.json(customers);
     } catch (error) {
+        console.error("Error fetching customers:", error);
         res.status(500).json({ error: "Server error while fetching customers" });
     }
 });
 
-app.listen(5000, () => {
-    console.log("Server running on port 5000");
-});
