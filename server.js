@@ -7,9 +7,13 @@ app.use(express.json());
 app.use(cors());
 
 // Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/shoppingDB", { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log("MongoDB Connected Successfully"))
-    .catch(err => console.error("MongoDB Connection Error:", err));
+
+const MONGO_URI = "mongodb+srv://anmoljain1420:jainsahab_2003@cluster0.8t1jw.mongodb.net/shoppingDB?retryWrites=true&w=majority&appName=Cluster0"
+
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log("✅ MongoDB Connected Successfully"))
+    .catch(err => console.error("❌ MongoDB Connection Error:", err));
+
 
 // Define Schemas
 const ItemSchema = new mongoose.Schema({
