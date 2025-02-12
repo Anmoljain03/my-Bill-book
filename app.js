@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-let items = []; 
+let items = [];
 
 // Fetch items from the backend and update the global `items` array
 async function fetchItems() {
