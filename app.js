@@ -8,7 +8,7 @@ let items = [];
 // Fetch items from the backend and update the global `items` array
 async function fetchItems() {
     try {
-        const response = await fetch("http://localhost:5000/items");
+        const response = await fetch("https://my-bill-book-4.onrender.com/items");
         items = await response.json();
         console.log("Fetched items:", items);
     } catch (error) {
@@ -130,15 +130,15 @@ async function generateBill(purchases, customerName, gender) {
     <p><b>Carry Bag:</b> ${carryBag ? "Yes (10 Rs)" : "No"}</p>
     <p><b>GST (10%):</b> ${gst.toFixed(2)} Rs</p>
     <h3>Total Payable Amount: ${finalAmount.toFixed(2)} Rs</h3>
-    <h2>Thank You for Visiting Jain Mobile</h2>`;
+    <h2>Thank You for Visiting D-Mart</h2>`;
 
     document.getElementById("bill").innerHTML = billHTML;
 
-    
+    // ✅ Show the print button when bill is generated
     document.getElementById("printBillBtn").style.display = "block";
 
     try {
-        const response = await fetch("http://localhost:5000/customers", {
+        const response = await fetch("https://my-bill-book-4.onrender.com/customers", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ customerName, gender, purchases })
@@ -155,7 +155,7 @@ async function generateBill(purchases, customerName, gender) {
 function ownerLogin() {
     const password = prompt("Enter Owner Password:");
     
-    if (password === "1234") { // Change this to a stronger password
+    if (password === "1234") { // ✅ Change this to a stronger password
         document.getElementById("ownerSection").classList.remove("hidden");
         alert("Access Granted!");
     } else {
@@ -177,7 +177,7 @@ async function addNewItem() {
     }
 
     try {
-        const response = await fetch("http://localhost:5000/items", {
+        const response = await fetch("https://my-bill-book-4.onrender.com/items", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: itemName, price: parseFloat(itemPrice) })
@@ -204,7 +204,7 @@ async function deleteItem() {
     }
 
     try {
-        const response = await fetch(`http://localhost:5000/items/${itemName}`, {
+        const response = await fetch(`https://my-bill-book-4.onrender.com/items/${itemName}`, {
             method: "DELETE",
         });
 
@@ -277,4 +277,3 @@ function showQRCode() {
 //     printWindow.document.close();
 //     printWindow.print();
 // }
-
