@@ -4,18 +4,20 @@ const cors = require("cors");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "*" })); // Allow all origins
 
-// Connect to MongoDB
+// ✅ Hardcoded MongoDB URI (No .env file)
+const MONGO_URI = "mongodb+srv://anmoljain1420:jainsahab_2003@cluster0.8t1jw.mongodb.net/shoppingDB?retryWrites=true&w=majority&appName=Cluster0";
 
-const MONGO_URI = "mongodb+srv://anmoljain1420:jainsahab_2003@cluster0.8t1jw.mongodb.net/shoppingDB?retryWrites=true&w=majority&appName=Cluster0"
-
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+// ✅ Connect to MongoDB with better error handling
+mongoose.connect(MONGO_URI)
     .then(() => console.log("✅ MongoDB Connected Successfully"))
-    .catch(err => console.error("❌ MongoDB Connection Error:", err));
+    .catch(err => {
+        console.error("❌ MongoDB Connection Error:", err);
+        process.exit(1); // Exit if DB connection fails
+    });
 
-
-// Define Schemas
+// ✅ Define Schemas
 const ItemSchema = new mongoose.Schema({
     name: String,
     price: Number
@@ -29,16 +31,34 @@ const CustomerSchema = new mongoose.Schema({
 });
 const Customer = mongoose.model("Customer", CustomerSchema);
 
-// Fetch all items
+// ✅ Fetch all items
 app.get("/items", async (req, res) => {
     try {
         const items = await Item.find();
+        console.log("📦 Fetched Items:", items); // Debugging Log
         res.json(items);
     } catch (error) {
         res.status(500).json({ error: "Server error while fetching items" });
     }
 });
 
+// ✅ Add new item
+app.post("/items", async (req, res) => {
+    try {
+        const { name, price } = req.body;
+        if (!name || !price) {
+            return res.status(400).json({ error: "Item name and price are required" });
+        }
+
+        const newItem = new Item({ name, price });
+        await newItem.save();
+        res.status(201).json({ message: "Item added successfully", item: newItem });
+    } catch (error) {
+        res.status(500).json({ error: "Server error while adding item" });
+    }
+});
+
+// ✅ Delete item
 app.delete("/items/:name", async (req, res) => {
     try {
         const itemName = req.params.name;
@@ -55,24 +75,7 @@ app.delete("/items/:name", async (req, res) => {
     }
 });
 
-
-// Add new item
-app.post("/items", async (req, res) => {
-    try {
-        const { name, price } = req.body;
-        if (!name || !price) {
-            return res.status(400).json({ error: "Item name and price are required" });
-        }
-
-        const newItem = new Item({ name, price });
-        await newItem.save();
-        res.status(201).json({ message: "Item added successfully", item: newItem });
-    } catch (error) {
-        res.status(500).json({ error: "Server error while adding item" });
-    }
-});
-
-// Save customer purchase
+// ✅ Save customer purchase
 app.post("/customers", async (req, res) => {
     try {
         const { customerName, gender, purchases } = req.body;
@@ -84,11 +87,11 @@ app.post("/customers", async (req, res) => {
     }
 });
 
-// Get all customers
+// ✅ Get all customers
 app.get("/customers", async (req, res) => {
     try {
         const customers = await Customer.find();
-        console.log("Fetched Customers from MongoDB:", customers); 
+        console.log("🧑‍🤝‍🧑 Fetched Customers:", customers); // Debugging Log
         res.json(customers);
     } catch (error) {
         console.error("Error fetching customers:", error);
@@ -96,3 +99,8 @@ app.get("/customers", async (req, res) => {
     }
 });
 
+// ✅ Start the server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+});
