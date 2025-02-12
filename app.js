@@ -130,11 +130,11 @@ async function generateBill(purchases, customerName, gender) {
     <p><b>Carry Bag:</b> ${carryBag ? "Yes (10 Rs)" : "No"}</p>
     <p><b>GST (10%):</b> ${gst.toFixed(2)} Rs</p>
     <h3>Total Payable Amount: ${finalAmount.toFixed(2)} Rs</h3>
-    <h2>Thank You for Visiting D-Mart</h2>`;
+    <h2>Thank You for Visiting Jain Mobile</h2>`;
 
     document.getElementById("bill").innerHTML = billHTML;
 
-    // ✅ Show the print button when bill is generated
+    
     document.getElementById("printBillBtn").style.display = "block";
 
     try {
@@ -155,7 +155,7 @@ async function generateBill(purchases, customerName, gender) {
 function ownerLogin() {
     const password = prompt("Enter Owner Password:");
     
-    if (password === "1234") { // ✅ Change this to a stronger password
+    if (password === "1234") { // Change this to a stronger password
         document.getElementById("ownerSection").classList.remove("hidden");
         alert("Access Granted!");
     } else {
@@ -234,7 +234,7 @@ function showQRCode() {
     }
 
     const totalAmount = parseFloat(totalText[0]); 
-    const upiID = "8619681743@ptsbi"; 
+    const upiID = "9929689629@pthdfc"; 
 
     if (!upiID || upiID.includes("your-upi-id")) {
         alert("Error: Please set a valid UPI ID in the script.");
