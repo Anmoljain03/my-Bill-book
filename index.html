@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-Mart Billing System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Jain Mobile Shop Billing System</h2>
+
+        <label>Enter customer's name: <input type="text" id="customerName"></label><br><br>
+
+        <label>Select Gender:
+            <select id="gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </label>
+        <br><br>
+        <hr>
+
+        <button class="btn" onclick="showQRCode()">Scan and Pay</button>
+        <div id="paymentSection"></div>
+
+        <button class="btn" id="startBilling" onclick="startShopping()">Start Billing</button>
+
+        <div id="bill"></div>
+
+        <!-- Print Bill Button (Initially Hidden) -->
+        <!-- Print Bill Button (Hidden Initially) -->
+<button id="printBillBtn" class="btn hidden" onclick="printBill()">Print Bill</button>
+
+
+
+        <button class="btn" onclick="ownerLogin()">Owner Login</button>
+
+        <div id="ownerSection" class="hidden">
+            <hr>
+            <h3>Add New Item</h3>
+            <label>Item Name: <input type="text" id="itemName"></label><br><br>
+            <label>Price: <input type="number" id="itemPrice"></label><br><br>
+            <button class="btn" onclick="addNewItem()">Add Item</button>
+            <div id="itemStatus"></div>
+        
+            <hr>
+            <h3>Delete Item</h3>
+            <label>Enter Item Name: <input type="text" id="deleteItemName"></label><br><br>
+            <button class="btn" onclick="deleteItem()">Delete Item</button>
+            <div id="deleteStatus"></div>
+        </div>
+        
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
+
+
+<!-- 
+["OnePlus 10 Pro 5G", "OnePlus 9 Pro 5G", "Samsung Galaxy S22 Plus 5G", "Samsung Galaxy S21", "Vivo X80 Pro", "OnePlus 10T 5G", "OnePlus Nord CE4 5G", "OnePlus 12R", "OnePlus 12", "Apple iPhone 15 Pro"]; -->
