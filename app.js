@@ -2,8 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("printBillBtn").classList.add("hidden");
 });
 
-
-let items = []; 
+let items = [];
 
 // Fetch items from the backend and update the global `items` array
 async function fetchItems() {
@@ -25,9 +24,15 @@ async function startShopping() {
 
     const customerName = document.getElementById("customerName").value;
     const gender = document.getElementById("gender").value;
+    const phoneNumber = document.getElementById("phoneNumber").value;
 
     if (!customerName) {
         alert("Please enter customer name");
+        return;
+    }
+
+    if (!phoneNumber || phoneNumber.length !== 10 || isNaN(phoneNumber)) {
+        alert("Please enter a valid 10-digit phone number");
         return;
     }
 
@@ -37,31 +42,30 @@ async function startShopping() {
     }
 
     let purchases = [];
-    addItem(purchases, customerName, gender);
+    addItem(purchases, customerName, gender, phoneNumber);
 }
 
-
 // Function to add an item to the bill
-function addItem(purchases, customerName, gender) {
+function addItem(purchases, customerName, gender, phoneNumber) {
     let itemNames = items.map((item, index) => `${index + 1}. ${item.name} (Rs. ${item.price})`).join("\n");
 
     let index = prompt(`Enter item number (1-${items.length}) or press Cancel to finish:\n${itemNames}`);
     if (index === null) {
-        generateBill(purchases, customerName, gender);
+        generateBill(purchases, customerName, gender, phoneNumber);
         return;
     }
 
     index = parseInt(index);
     if (isNaN(index) || index < 1 || index > items.length) {
         alert("Invalid item number. Please enter a number between 1 and " + items.length);
-        addItem(purchases, customerName, gender);
+        addItem(purchases, customerName, gender, phoneNumber);
         return;
     }
 
     let quantity = prompt(`Enter quantity for ${items[index - 1].name} (Price: ${items[index - 1].price} Rs each):`);
     if (quantity === null || quantity.trim() === "" || isNaN(quantity) || quantity <= 0) {
         alert("Invalid quantity. Please enter again.");
-        addItem(purchases, customerName, gender);
+        addItem(purchases, customerName, gender, phoneNumber);
         return;
     }
 
@@ -73,36 +77,14 @@ function addItem(purchases, customerName, gender) {
 
     let addMore = confirm("Do you want to add another item?");
     if (addMore) {
-        addItem(purchases, customerName, gender);
+        addItem(purchases, customerName, gender, phoneNumber);
     } else {
-        generateBill(purchases, customerName, gender);
+        generateBill(purchases, customerName, gender, phoneNumber);
     }
 }
 
-// Show the Print Bill button
-function showPrintButton() {
-    document.getElementById("printBillBtn").classList.remove("hidden");
-}
-
-function printBill() {
-    window.print(); // Open the browser's print dialog
-}
-
-
-// Print the bill
-function printBill() {
-    let billContent = document.getElementById("bill").innerHTML;
-    let originalContent = document.body.innerHTML;
-
-    document.body.innerHTML = `<div class="container">${billContent}</div>`;
-    window.print();
-    document.body.innerHTML = originalContent;
-    location.reload(); // Reload the page after printing
-}
-
 // Generate the bill and display it
-// Generate the bill and display it
-async function generateBill(purchases, customerName, gender) {
+async function generateBill(purchases, customerName, gender, phoneNumber) {
     if (purchases.length === 0) {
         alert("No items purchased.");
         return;
@@ -117,7 +99,7 @@ async function generateBill(purchases, customerName, gender) {
     let finalAmount = discountedTotal + gst + carryBag;
 
     let billHTML = `<h3>Bill Summary</h3>
-    <p><b>Name:</b> ${customerName} &nbsp;&nbsp; <b>Date:</b> ${new Date().toLocaleDateString()}</p>
+    <p><b>Name:</b> ${customerName} &nbsp;&nbsp; <b>Phone:</b> ${phoneNumber} &nbsp;&nbsp; <b>Date:</b> ${new Date().toLocaleDateString()}</p>
     <table>
         <tr><th>Item Name</th><th>Quantity</th><th>Price</th><th>Total</th></tr>`;
 
@@ -137,14 +119,13 @@ async function generateBill(purchases, customerName, gender) {
 
     document.getElementById("bill").innerHTML = billHTML;
 
-    // ✅ Show the print button when bill is generated
     document.getElementById("printBillBtn").style.display = "block";
 
     try {
         const response = await fetch("https://my-bill-book-4.onrender.com/customers", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ customerName, gender, purchases })
+            body: JSON.stringify({ customerName, gender, phoneNumber, purchases })
         });
 
         const result = await response.json();
@@ -154,10 +135,9 @@ async function generateBill(purchases, customerName, gender) {
     }
 }
 
-
+// Owner login function
 function ownerLogin() {
     const password = prompt("Enter Owner Password:");
-    
     if (password === "1234") { 
         document.getElementById("ownerSection").classList.remove("hidden");
         alert("Access Granted!");
@@ -166,10 +146,7 @@ function ownerLogin() {
     }
 }
 
-
-
-
-
+// Function to add a new item
 async function addNewItem() {
     const itemName = document.getElementById("itemName").value;
     const itemPrice = document.getElementById("itemPrice").value;
@@ -191,13 +168,13 @@ async function addNewItem() {
         document.getElementById("itemName").value = "";
         document.getElementById("itemPrice").value = "";
 
-        fetchItems(); // Refresh the items list
+        fetchItems();
     } catch (error) {
         console.error("Error adding item:", error);
-        document.getElementById("itemStatus").innerText = "Error adding item.";
     }
 }
 
+// Function to delete an item
 async function deleteItem() {
     const itemName = document.getElementById("deleteItemName").value;
 
@@ -215,68 +192,8 @@ async function deleteItem() {
         document.getElementById("deleteStatus").innerText = result.message;
         document.getElementById("deleteItemName").value = "";
 
-        fetchItems(); // Refresh item list after deletion
+        fetchItems();
     } catch (error) {
         console.error("Error deleting item:", error);
-        document.getElementById("deleteStatus").innerText = "Error deleting item.";
     }
 }
-
-function showQRCode() {
-    // Get the total amount from the bill section
-    const totalElement = document.querySelector("#bill h3:last-of-type");
-    if (!totalElement) {
-        alert("Error: No bill found. Please generate a bill first.");
-        return;
-    }
-
-    const totalText = totalElement.textContent.match(/(\d+(\.\d+)?)/); // Extract total amount
-    if (!totalText) {
-        alert("Error: Could not retrieve the total amount.");
-        return;
-    }
-
-    const totalAmount = parseFloat(totalText[0]); 
-    const upiID = "9929689629@pthdfc"; 
-
-    if (!upiID || upiID.includes("your-upi-id")) {
-        alert("Error: Please set a valid UPI ID in the script.");
-        return;
-    }
-    
-
-    // Generate UPI payment URL
-    const upiURL = `upi://pay?pa=${upiID}&pn=Jain-Mobile&am=${totalAmount.toFixed(2)}&cu=INR&tn=Bill%20Payment`;
-
-    // Generate QR Code
-    const qrCodeURL = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiURL)}`;
-
-    // Display QR Code
-    document.getElementById("paymentSection").innerHTML = `
-        <p><b>Scan this QR Code to Pay:</b></p>
-        <img src="${qrCodeURL}" alt="QR Code">
-        <p><b>UPI ID:</b> ${upiID}</p>
-        <p><b>Amount:</b> ₹${totalAmount.toFixed(2)}</p>
-        <p><b>Payment Note:</b>Jain Mobile Shop Billing System</p>
-    `;
-
-    alert("Scan the QR code with your UPI app to complete the payment!");
-}
-
-
-
-// function printBill() {
-//     const billContent = document.getElementById("bill").innerHTML;
-    
-//     if (!billContent) {
-//         alert("No bill available to print!");
-//         return;
-//     }
-
-//     let printWindow = window.open("", "", "width=600,height=600");
-//     printWindow.document.write("<html><head><title>Print Bill</title></head><body>");
-//     printWindow.document.write(billContent);
-//     printWindow.document.write("</body></html>");
-//     printWindow.document.close();
-//     printWindow.print();
-// }
