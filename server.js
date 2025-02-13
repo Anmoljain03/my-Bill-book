@@ -6,11 +6,11 @@ const app = express();
 app.use(express.json());
 app.use(cors({ origin: "*" })); // Allow all origins
 
-// ✅ Hardcoded MongoDB URI (Consider using .env for security)
+// ✅ Hardcoded MongoDB URI (No .env file)
 const MONGO_URI = "mongodb+srv://anmoljain1420:jainsahab_2003@cluster0.8t1jw.mongodb.net/shoppingDB?retryWrites=true&w=majority&appName=Cluster0";
 
 // ✅ Connect to MongoDB with better error handling
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(MONGO_URI)
     .then(() => console.log("✅ MongoDB Connected Successfully"))
     .catch(err => {
         console.error("❌ MongoDB Connection Error:", err);
@@ -19,15 +19,15 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // ✅ Define Schemas
 const ItemSchema = new mongoose.Schema({
-    name: { type: String, required: true, unique: true },
-    price: { type: Number, required: true }
+    name: String,
+    price: Number
 });
 const Item = mongoose.model("Item", ItemSchema);
 
 const CustomerSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    phoneNumber: { type: String, required: true, match: /^\d{10}$/ },
-    gender: { type: String, required: true },
+    name: String,
+    phoneNumber: String, // ✅ Added phone number field
+    gender: String,
     purchases: [{ item: String, quantity: Number, price: Number, total: Number }]
 });
 const Customer = mongoose.model("Customer", CustomerSchema);
@@ -48,11 +48,6 @@ app.post("/items", async (req, res) => {
         const { name, price } = req.body;
         if (!name || !price) {
             return res.status(400).json({ error: "Item name and price are required" });
-        }
-
-        const existingItem = await Item.findOne({ name });
-        if (existingItem) {
-            return res.status(400).json({ error: "Item with this name already exists" });
         }
 
         const newItem = new Item({ name, price });
@@ -84,17 +79,13 @@ app.post("/customers", async (req, res) => {
     try {
         const { customerName, phoneNumber, gender, purchases } = req.body;
 
-        if (!customerName || !phoneNumber || !gender || !purchases.length) {
-            return res.status(400).json({ error: "All fields are required" });
-        }
-
-        if (!/^\d{10}$/.test(phoneNumber)) {
+        if (!phoneNumber || !/^\d{10}$/.test(phoneNumber)) {
             return res.status(400).json({ error: "Invalid phone number. Must be 10 digits." });
         }
 
         const newCustomer = new Customer({ name: customerName, phoneNumber, gender, purchases });
         await newCustomer.save();
-        res.status(201).json({ message: "Bill saved successfully!", customer: newCustomer });
+        res.status(201).json({ message: "Bill saved successfully!" });
     } catch (error) {
         res.status(500).json({ error: "Server error while saving bill" });
     }
