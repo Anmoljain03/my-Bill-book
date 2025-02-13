@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-Mart Billing System</title>
+    <title>Jain Mobile Shop Billing System</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h2>Jain Mobile Shop Billing System</h2>
 
-        <label>Enter customer's name: <input type="text" id="customerName"></label><br><br>
+        <label>Enter Customer's Name: <input type="text" id="customerName"></label><br><br>
 
         <label>Select Gender:
             <select id="gender">
@@ -18,6 +18,9 @@
                 <option value="Female">Female</option>
             </select>
         </label>
+        <br><br>
+
+        <label>Enter Phone Number: <input type="text" id="phoneNumber" maxlength="10" placeholder="Enter 10-digit number"></label>
         <br><br>
         <hr>
 
@@ -28,11 +31,8 @@
 
         <div id="bill"></div>
 
-        <!-- Print Bill Button (Initially Hidden) -->
         <!-- Print Bill Button (Hidden Initially) -->
-<button id="printBillBtn" class="btn hidden" onclick="printBill()">Print Bill</button>
-
-
+        <button id="printBillBtn" class="btn hidden" onclick="printBill()">Print Bill</button>
 
         <button class="btn" onclick="ownerLogin()">Owner Login</button>
 
@@ -50,14 +50,11 @@
             <button class="btn" onclick="deleteItem()">Delete Item</button>
             <div id="deleteStatus"></div>
         </div>
-        
-
     </div>
 
     <script src="app.js"></script>
 </body>
 </html>
-
 
 
 <!-- 
