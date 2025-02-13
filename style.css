@@ -10,7 +10,8 @@ body {
     font-family: 'Poppins', sans-serif;
     margin: 20px;
     padding: 20px;
-    background-color: #C9A9A6;
+    background-color: red;
+    /* background-color: #C9A9A6; */
 }
 
 /* Main container */
