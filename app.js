@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-let items = [];
+let items = []; 
 
 // Fetch items from the backend and update the global `items` array
 async function fetchItems() {
@@ -133,7 +133,7 @@ async function generateBill(purchases, customerName, gender) {
     <p><b>Carry Bag:</b> ${carryBag ? "Yes (10 Rs)" : "No"}</p>
     <p><b>GST (10%):</b> ${gst.toFixed(2)} Rs</p>
     <h3>Total Payable Amount: ${finalAmount.toFixed(2)} Rs</h3>
-    <h2>Thank You for Visiting D-Mart</h2>`;
+    <h2>Thank You for Visiting Jain Mobile</h2>`;
 
     document.getElementById("bill").innerHTML = billHTML;
 
@@ -158,7 +158,7 @@ async function generateBill(purchases, customerName, gender) {
 function ownerLogin() {
     const password = prompt("Enter Owner Password:");
     
-    if (password === "1234") { // ✅ Change this to a stronger password
+    if (password === "1234") { 
         document.getElementById("ownerSection").classList.remove("hidden");
         alert("Access Granted!");
     } else {
@@ -246,7 +246,7 @@ function showQRCode() {
     
 
     // Generate UPI payment URL
-    const upiURL = `upi://pay?pa=${upiID}&pn=D-Mart&am=${totalAmount.toFixed(2)}&cu=INR&tn=Bill%20Payment`;
+    const upiURL = `upi://pay?pa=${upiID}&pn=Jain-Mobile&am=${totalAmount.toFixed(2)}&cu=INR&tn=Bill%20Payment`;
 
     // Generate QR Code
     const qrCodeURL = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiURL)}`;
