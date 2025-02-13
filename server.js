@@ -26,6 +26,7 @@ const Item = mongoose.model("Item", ItemSchema);
 
 const CustomerSchema = new mongoose.Schema({
     name: String,
+    phoneNumber: String, // ✅ Added phone number field
     gender: String,
     purchases: [{ item: String, quantity: Number, price: Number, total: Number }]
 });
@@ -35,7 +36,6 @@ const Customer = mongoose.model("Customer", CustomerSchema);
 app.get("/items", async (req, res) => {
     try {
         const items = await Item.find();
-        console.log("📦 Fetched Items:", items); // Debugging Log
         res.json(items);
     } catch (error) {
         res.status(500).json({ error: "Server error while fetching items" });
@@ -70,7 +70,6 @@ app.delete("/items/:name", async (req, res) => {
 
         res.json({ message: `Item "${itemName}" deleted successfully` });
     } catch (error) {
-        console.error("Error deleting item:", error);
         res.status(500).json({ error: "Server error while deleting item" });
     }
 });
@@ -78,8 +77,13 @@ app.delete("/items/:name", async (req, res) => {
 // ✅ Save customer purchase
 app.post("/customers", async (req, res) => {
     try {
-        const { customerName, gender, purchases } = req.body;
-        const newCustomer = new Customer({ name: customerName, gender, purchases });
+        const { customerName, phoneNumber, gender, purchases } = req.body;
+
+        if (!phoneNumber || !/^\d{10}$/.test(phoneNumber)) {
+            return res.status(400).json({ error: "Invalid phone number. Must be 10 digits." });
+        }
+
+        const newCustomer = new Customer({ name: customerName, phoneNumber, gender, purchases });
         await newCustomer.save();
         res.status(201).json({ message: "Bill saved successfully!" });
     } catch (error) {
@@ -91,10 +95,8 @@ app.post("/customers", async (req, res) => {
 app.get("/customers", async (req, res) => {
     try {
         const customers = await Customer.find();
-        console.log("🧑‍🤝‍🧑 Fetched Customers:", customers); // Debugging Log
         res.json(customers);
     } catch (error) {
-        console.error("Error fetching customers:", error);
         res.status(500).json({ error: "Server error while fetching customers" });
     }
 });
