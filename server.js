@@ -17,6 +17,7 @@ mongoose.connect(MONGO_URI)
         process.exit(1); // Exit if DB connection fails
     });
 
+
 // ✅ Define Schemas
 const ItemSchema = new mongoose.Schema({
     name: String,
